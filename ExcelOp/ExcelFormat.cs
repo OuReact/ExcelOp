@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ExcelOp
 {
-    public static internal class ExcelFormat
+    public static  class ExcelFormat
     {
 
         /// <summary>
@@ -14,7 +14,7 @@ namespace ExcelOp
         /// </summary>
         /// <param name="columnNumber"></param>
         /// <returns></returns>
-        static string ColumnNumberToName(int columnNumber)
+        public static string ColumnNumberToName(int columnNumber)
         {
             string columnName = string.Empty;
             while (columnNumber > 0)
@@ -25,5 +25,7 @@ namespace ExcelOp
             }
             return columnName;
         }
+
+
     }
 }

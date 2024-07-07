@@ -56,22 +56,36 @@ namespace ExcelTest
             writeTest.Clear();
 
             ExcelOp.Data.Span testSpan = new Span(DateTime.Parse("2024/01/10"), DateTime.Parse("2024/02/10"));
-            int writeIndex = 5;
+            int writeFirstIndex = 5;
             int columnIndex = 3;
 
-            IXLCell writeCell = writeTest.Cell(writeIndex, columnIndex);
+            IXLCell writeCell = writeTest.Cell(writeFirstIndex, columnIndex);
             writeCell.SetValue("テストデータ書き込み開始");
+            int writeIndex = writeFirstIndex+1;
 
             foreach (  ExcelOp.Data.Span span in spanList)
             {
-                writeIndex++;
                 writeCell = writeTest.Cell(writeIndex, columnIndex);
                 testSpan.TryGetSpacDay(span,out  spanDay);
                 writeCell.SetValue(spanDay);
+                writeIndex++;
+                
 
             }
-            readByPathWb.Save();
+            writeTest.Cell(writeIndex, columnIndex).FormulaA1= string.Format( "SUM({0}{1}:{2}{3})",
+            ExcelOp.ExcelFormat.ColumnNumberToName(columnIndex),
+            writeFirstIndex+1,
+            ExcelOp.ExcelFormat.ColumnNumberToName(columnIndex),
+            writeIndex -1
+            );
 
+            readByPathWb.CalculateMode = XLCalculateMode.Auto;
+            double sumValue = writeTest.Cell(writeIndex, columnIndex).GetDouble();
+
+            Assert.AreEqual(42,sumValue );
+
+            readByPathWb.Save();
+            
             readByPathWb.Dispose();
 
             string location = System.Reflection.Assembly.GetEntryAssembly().Location;
@@ -84,7 +98,6 @@ namespace ExcelTest
                 Arguments = dirPath,
                 FileName = "explorer.exe"
             };
-
             Process.Start(startInfo);
         }
 
